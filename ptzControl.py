@@ -31,9 +31,13 @@ def get_ptz_config(channel, topic):
     subscription = Subscription(channel)
     subscription.subscribe(topic=topic)
     
+    field = FieldSelector
+    
+    field.fields = "ALL"
+    
     log.info("Getting current PTZ configuration")
     
-    msg_get_ptz = Message(content=Empty, reply_to=subscription)
+    msg_get_ptz = Message(content=field, reply_to=subscription)
     
     a = channel.publish(msg_get_ptz, topic)
     
