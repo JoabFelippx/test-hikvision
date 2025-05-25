@@ -1,5 +1,6 @@
 from is_msgs.camera_pb2 import CameraConfig, CameraConfigFields, PTZControl
 from is_msgs.common_pb2 import FieldSelector
+from google.protobuf.empty_pb2 import Empty
 
 from is_wire.core import Message, Subscription, Logger
 from streamChannel import StreamChannel
@@ -32,15 +33,11 @@ def get_ptz_config(channel, topic):
     
     log.info("Getting current PTZ configuration")
     
-    msg_rcvd = bool
+    msg_get_ptz = Message(content=Empty, reply_to=subscription)
     
-    while type(msg_rcvd) == bool:
-        
-        msg_rcvd = channel.consume()
+    a = channel.publish(msg_get_ptz, topic)
     
-    msg_rcvd = msg_rcvd.unpack(CameraConfig)
-    
-    print(msg_rcvd)
+    print(a)
         
 def send_ptz_config(channel, topic, x, y, z):
     log = Logger(name="SetConfig-hikvision")
@@ -51,12 +48,12 @@ def send_ptz_config(channel, topic, x, y, z):
     log.info("Sending message to set PTZ configuration")
 
     # Create a message to send
-    msg_ptz = Message(content=create_ptz_config_msg(x, y, z), reply_to=subscription)
+    msg_set_ptz = Message(content=create_ptz_config_msg(x, y, z), reply_to=subscription)
 
     # Send the message
-    channel.publish(msg_ptz, topic)
+    channel.publish(msg_set_ptz, topic)
 
-    print(msg_ptz)
+    print(msg_set_ptz)
 
 
 
