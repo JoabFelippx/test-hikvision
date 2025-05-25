@@ -31,15 +31,14 @@ def get_ptz_config(channel, topic):
     subscription = Subscription(channel)
     subscription.subscribe(topic=topic)
     
-    field = FieldSelector
-    
-    field.fields = "ALL"
+    selector = FieldSelector(fields=[CameraConfigFields.Value("ALL")])
+
     
     log.info("Getting current PTZ configuration")
     
-    msg_get_ptz = Message(content=field, reply_to=subscription)
+    msg_get_ptz = Message(content=selector, reply_to=subscription, topic=topic)
     
-    a = channel.publish(msg_get_ptz, topic)
+    a = channel.publish(msg_get_ptz)
     
     print(a)
         
